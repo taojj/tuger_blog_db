@@ -1,0 +1,154 @@
+//key&pair说明
+/*
+|6-段落paragraph
+   |6.1-/post(body)
+   |6.2-/topic(question/answer/review)
+   |6.3-/page_remain(comment)
+
+6-原生页面page(=6-段落paragraph:目录category)
+   |6.1-文章post
+       |-主题标记label:"post"  //label for subject主题标记
+       |-分类标记key:"b"   //正文body
+       |-关联标记pair:{"timestamp":""}  //=previous post1
+       |-排序标记sequence:{"num":1,"date":"newDate(timestamp)","page_id":1220}
+
+       |-指向主题parent:{"timestamp":""}  //
+       |-检索关键词tags:["",""] //检索、聚合用
+       |-节标题title:"" //
+       |-附加信息info:{"email":"","qq":1,"uname_in_bbs":""} //添加email
+
+   |6.2-话题topic
+       |-主题标记label:"post"  //label for subject主题标记
+       |-分类标记key:"q/a/r"   //问答评question/answer/review
+       |-关联标记pair:{"timestamp":""}   //
+       |-排序标记sequence:{"num":1,"date":"newDate(timestamp)","page_id":1220}
+
+       |-指向主题parent:{"timestamp":""}   //
+       |-检索关键词tags:["",""] //检索、聚合用
+
+   |6.3-页面残留page_remain
+       |-主题标记label:"page_remain"  //label for subject主题标记
+       |-分类标记key:"c"   //一般留言comment,email,reading进展
+       |-关联标记pair:{"timestamp":""}   //
+       |-排序标记sequence:{"num":1,"date":"newDate(timestamp)","page_id":1220}
+
+       |-指向主题parent:{"timestamp":""}   //
+       |-检索关键词tags:["",""] //检索、聚合用
+       |-附加信息info:{"email":"","qq":1,"uname_in_bbs":""} //添加email
+
+*/
+
+
+var post = {
+
+	//原有字段
+	"page_id":12201,//新编号
+	"user_id":"",
+	"user_name":"",
+	"content":"",
+	"floor_id":1301,//原楼层编号
+	"page_index":12,
+	"meta":{"created_at":"date"},
+
+	//分类
+	"label":"post",//主题标记
+	"key":"b",//分类标记body
+	"sequence":{//排序标记
+		"num":1,
+		"date":"newDate(self_timestamp)",
+		"page_index":12
+	},
+
+  //分析1:语义性（设标题，关键词）
+	//设标题
+	"title":"《》",//设置标题，直接拷贝/另设自己认为合适的
+	"desc":"",//
+	"tags":["传媒篇","丁二的故事","大国崛起"],//提炼关键词，$elemMatch匹配
+
+
+	//分析2:关联性（找Q/A/R做pair成对，指向subject）
+	//做关联
+	"pair":{"timestamp":"timestamp","page_id":12233},//=question
+	"parent":{"timestamp":"timestamp","page_id":12203},//=self
+
+	//设纬度6
+	"degree":6.1//默认
+
+};
+
+var topic = {
+
+	//原有字段
+	"page_id":12201,//新编号
+	"user_id":"",
+	"user_name":"",
+	"content":"",
+	"floor_id":1301,//原楼层编号
+	"page_index":12,
+	"meta":{"created_at":"date"},
+
+	//分类
+	"label":"topic",//主题标记
+	"key":"q/a/r",//分类标记question/answer/review
+	"sequence":{//排序标记
+		"num":1,
+		"date":"newDate(self_timestamp)",
+		"page_index":12
+	},
+
+  //分析1:语义性（设标题，关键词）
+	//设标题
+	"title":"《》",//设置标题，直接拷贝/另设自己认为合适的
+	"desc":"",//预留
+	"tags_q":[""],
+	"tags_a":["姑苏烟","思辨篇","婚姻观"],
+	"tags_r":["show_mails","索取全文"],//提炼关键词，$elemMatch匹配
+
+
+	//分析2:关联性（找Q/A/R做pair成对，指向subject）
+	//做关联
+	"pair":{"timestamp":"timestamp","page_id":12233},//=answer
+	"parent":{"timestamp":"timestamp","page_id":12203},//=answer
+
+
+	//[附加addons]对于r部分，加email
+	"info":{//对于review，有user相关的附加信息，如email，
+		"uname_in_bbs":"",
+		"email":"",
+		"email_2":"",
+		"qq":0,
+		"show_mail_time":"timestamp",//便于追溯
+		"label":[],
+		"intro":""//个人介绍，IT创业男
+	},
+
+	//设纬度6
+	"degree":6.2//默认	
+
+};
+
+var page_remain = {
+
+	//原有字段
+	"page_id":12201,//新编号
+	"user_id":"",
+	"user_name":"",
+	"content":"",
+	"floor_id":1301,//原楼层编号
+	"page_index":12,
+	"meta":{"created_at":"date"},
+
+	//分类
+	"label":"page_remain",//主题标记
+	"key":"c",//分类标记
+	"sequence":{//排序标记
+		"num":1,
+		"date":"newDate(self_timestamp)",
+		"page_index":12
+	},
+
+	//设纬度6
+	"degree":6.3//默认	
+
+};
+
