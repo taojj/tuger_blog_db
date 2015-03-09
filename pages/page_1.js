@@ -6,12 +6,18 @@ var load_sample = [
 	{
 
 		//sort
-		"label":"post",//subject = post
-		"key":"b",//body
+		"label":"post",//主题标记post
+		"key":"b",//分类标记body
+		"sequence":{//排序标记
+			"num":1,
+			"date":"newDate(self_timestamp)",
+			"page_index":12
+		},
 
-		//timestamp
+		//关联标记
 		"self":"2007-01-09  17:07:43",//=body timestamp
 		"pair":"2007-01-09  17:07:43",//=question timestamp? : null
+		//指向主题
 		"parent":"2007-01-09  17:07:43",//=body timestamp
 
 		//addons
@@ -39,10 +45,15 @@ var load_sample = [
 		//sort
 		"label":"topic",//subject = topic
 		"key":"q",//question
-
-		//timestamp
+		"sequence":{//排序标记
+			"num":1,
+			"date":"newDate(self_timestamp)",
+			"page_index":12
+		},
+		//关联标记
 		"self":"2007-01-09  17:07:43",//=question timestamp
 		"pair":"2007-01-09  17:07:43",//=post/answer timestamp
+		//指向主题
 		"parent":"2007-01-09  17:07:43",//=answer timestamp
 
 		//addons
@@ -66,10 +77,15 @@ var load_sample = [
 		//sort
 		"label":"topic",//subject = topic
 		"key":"a",//answer
-
-		//timestamp
+		"sequence":{//排序标记
+			"num":1,
+			"date":"newDate(self_timestamp)",
+			"page_index":12
+		},
+		//关联标记
 		"self":"2007-01-09  17:07:43",//=answer timestamp
 		"pair":"2007-01-09  17:07:43",//=question timestamp
+		//指向主题
 		"parent":"2007-01-09  17:07:43",//subject myself? self timestamp
 
 		//addons
@@ -86,10 +102,16 @@ var load_sample = [
 		//sort
 		"label":"topic",//subject = topic
 		"key":"r",//review
+		"sequence":{//排序标记
+			"num":1,
+			"date":"newDate(self_timestamp)",
+			"page_index":12
+		},
 
-		//timestamp
+		//关联标记
 		"self":"2007-01-09  17:07:43",//=review timestamp
 		"pair":"2007-01-09  17:07:43",//=answer timestamp
+		//指向主题
 		"parent":"2007-01-09  17:07:43",//answer timestamp
 
 		//addons
@@ -114,8 +136,13 @@ var load_sample = [
 		//sort
 		"label":"page_remain",//subject = page_remain
 		"key":"c",//comment
+		"sequence":{//排序标记
+			"num":1,
+			"date":"newDate(self_timestamp)",
+			"page_index":12
+		},
 
-		//timestamp
+		//关联标记
 		"self":"2007-01-09  17:07:43",//=comment timestamp
 		"pair":"",//=null
 		"parent":"",//page_index
@@ -154,20 +181,34 @@ WriteResult({ "nMatched" : 43234, "nUpserted" : 0, "nModified" : 43233 })
 WriteResult({ "nMatched" : 313, "nUpserted" : 0, "nModified" : 313 })
 >
 
+db.pages.update({"info":{"$ne":null}},{"$rename":{"info":"user_info"}},{multi:true})
+WriteResult({ "nMatched" : 313, "nUpserted" : 0, "nModified" : 313 })
+
 
 */
 
-var page_index = 16;
 
 //2.forEach遍历
 load_sample.forEach(function(input) {
 
+	//2.1拆解信息
+	//1a-sort
+	var label = input['label'];
 	var key = input['key'];
-	var title = input['info']['title'];
-	var tags = input['tags'];
-	var pair = input['pair'];
+	var sequence = input['sequence'],
 
-	//find parent page_id according to parent_timestamp
+	//2b-pair & pair_id
+	var pair = input['pair'];
+  var pair_date = new Date(input['pair']);
+	var pair_id = 0;
+	var s = db.pages.find({"meta.created_at":pair_date});
+	while (s.hasNext()){
+		var temp = s.next();
+		pair_id = temp['page_id'];
+		//printjson(pair_id);
+	}
+
+	//3c-parent & parent_id
 	var parent = new Date(input['parent']);
 	var parent_id = 0;
 	var p = db.pages.find({"meta.created_at":parent});
@@ -178,90 +219,439 @@ load_sample.forEach(function(input) {
 		printjson(parent_id);
 	}
 
-	//find pair page_id according to self_timestamp
-  var pair = new Date(input['pair']);
-	var pair_id = 0;
-	var s = db.pages.find({"meta.created_at":pair});
-	while (s.hasNext()){
-		var temp = s.next();
-		pair_id = temp['page_id'];
+	//4d-info_for_subject
+	var title = input['info']['title'];
+	var desc = input['info']['desc'];
+	var tags = input['info']['tags'];
 
-		printjson(pair_id);
-	}
+	//5e-into_for_email
+	var email = input['info']['email'];
+	var email_2 = input['info']['email_2'];
+	var qq = input['info']['qq'];
+	var uname_in_bbs = input['info']['uname_in_bbs'];
+	var user_label = input['info']['label'];
+	var show_mail_time = input['info']['show_mail_time'];
+	var user_intro = input['info']['intro'];
 
-	//exists?
-	var self_d = new Date(input['self']);
-	var page = db.pages.find({{"page_index":page_index,"meta.created_at":self_d}});//"page_index":page_index,
+	//查询数据
+	var self_time = input['self'];
+	var self_date = new Date(self_time);
+	var page = db.pages.find({{"meta.created_at":self_date}});//"page_index":page_index,
 
 	while (page.hasNext()){
 
 		var temp = page.next();
-		var self_id = temp['page_id'];
-		printjson(temp['page_id']);
 
+		//page_id & floor_id
+		var page_id = temp['page_id'];
+		var floor_id = temp['floor_id'];
+		var page_index = temp['page_index'];
+		
+		printjson({"page_id":page_id,"floor_id":floor_id,"page_index":page_index});
 
 		//update
 
-		//2.1 if key=="q"  do "key":"q","parent":{"timestamp":"","page_id":16030},
-		if (key == "q") {//question
-			db.pages.update({"page_index":page_index,"meta.created_at":self_d},{"$set":{"key":"q","parent":{"timestamp":parent,"page_id":parent_id},"pair":{"timestamp":pair,"page_id":pair_id},"tags":tags}});
-			db.pages.update({"page_index":page_index,"meta.created_at":self_d},{"$set":{"degree":6}});
+		//2.1 if key=="b" do post update
+		if (key=="b") {
+
+			//"$set":value
+			var value1 = {//优化数据结构
+
+				//field - for post
+				"post_id":page_id,//暂时还用page_id代替
+				"title":title?title:"",
+				"desc":desc?desc:"",
+				"tags":tags?tags:[],
+				//"content_html":"",
+				"published_at":{"date":self_date,"day":self_time},
+
+				//sort
+				"label":"post",
+				"key":"b",
+				"sequence":{
+					"num":num?num:0,
+					"date":self_date,
+					"floor_id":floor_id,
+					"page_num":page_index
+				},
+
+				//pair - parent
+				"pair":{//=previous
+					"timestamp":pair,
+					"pair_id":pair_id
+				},
+				"parent":{//=subject
+					"timestamp":parent,
+					"parent_id":parent_id
+				},
+
+				"degree":6.1
+			};
+
+			//"$unset":
+			var value2 = {
+				"floor_id":1,
+				"page_id":1
+				"page_index":1,
+				"meta.created_at":1
+			};
+
 			//printjson();
-		
-		//2.2 if key=="a"  do	"key":"a","parent":{"timestamp":"","page_id":16030},"tags":["思辨篇","",""],"subject_id":"timestamp"
-		} else if (key == "a") {//answer
-			db.pages.update({"page_index":page_index,"meta.created_at":self_d},{"$set":{"key":"a","parent":{"timestamp":parent,"page_id":parent_id},"pair":{"timestamp":pair,"page_id":pair_id},"tags":tags,"title":title,"degree":5,"subject_id":parent}});
-			printjson();
-		
 
-		//2.3 if key=="r"  do			"key":"r",		"parent":{"timestamp":"","page_id":16030},
-		} else if (key == "r") {//review
-			db.pages.update({"page_index":page_index,"meta.created_at":self_d},{"$set":{"key":"r","parent":{"timestamp":parent,"page_id":parent_id},"pair":{"timestamp":pair,"page_id":pair_id},"tags":tags});
-			db.pages.update({"page_index":page_index,"meta.created_at":self_d},{"$set":{"degree":6}});
-			printjson();
-		
-
-		//2.4 if key=="c"  do			"key":"cp","parent":{"page_index":16,"page_id":16030},"tags":["思辨篇","",""]
-		} else if (key=="c"){//c_to_page
-			db.pages.update({"page_index":page_index,"meta.created_at":self_d},{"$set":{"key":"c","parent":{"page_index":page_index,"page_id":self_id},"tags":tags}});
-			db.pages.update({"page_index":page_index,"meta.created_at":self_d},{"set":{"degree":7}});
-		  printjson();
-
-		//2.5 if key=="e" do     
-		} else if (key=="e") {
+			db.pages.update({"meta.created_at":self_date},{"$set":value1});
+			//db.pages.update({"meta.created_at":self_date},{"$unset":value2});
 
 		}
 
+		//2.2 if key=="q"  do  update topic:question
+		} else if (key == "q") {//question
 
-	};
+			var value1 = {
+				//field - for topic
+				"question_id":page_id,//暂时还用page_id代替
+				"title":title?title:"",
+				"desc":desc?desc:"",
+				"tags":tags?tags:[],
+				//"content_html":"",
+				"published_at":{"date":self_date,"day":self_time},
+
+				//sort
+				"label":"topic",
+				"key":"q",
+				"sequence":{
+					"num":num?num:0,
+					"date":self_date,
+					"floor_id":floor_id,
+					"page_num":page_index
+				},
+
+				//pair - parent
+				"pair":{//=?post : null
+					"timestamp":pair,
+					"pair_id":pair_id
+				},
+				"parent":{//=subject
+					"timestamp":parent,
+					"parent_id":parent_id
+				},
+
+				"degree":6.2
+			};
+
+			//"$unset":
+			var value2 = {
+				"floor_id":1,
+				"page_id":1
+				"page_index":1,
+				"meta.created_at":1
+			};
+
+			db.pages.update({"meta.created_at":self_date},{"$set":value1});
+			//db.pages.update({"meta.created_at":self_date},{"$unset":value2});
+
+		
+		//2.3 if key=="a"  do	 update topic:answer
+		} else if (key == "a") {//answer
+
+			var value1 = {
+				//field - for topic
+				"answer_id":page_id,//暂时还用page_id代替
+				"title":title?title:"",
+				"desc":desc?desc:"",
+				"tags":tags?tags:[],
+				//"content_html":"",
+				"published_at":{"date":self_date,"day":self_time},
+
+				//sort
+				"label":"topic",
+				"key":"a",
+				"sequence":{
+					"num":num?num:0,
+					"date":self_date,
+					"floor_id":floor_id,
+					"page_num":page_index
+				},
+
+				//pair - parent
+				"pair":{//=?question : null
+					"timestamp":pair,
+					"pair_id":pair_id
+				},
+				"parent":{//=subject
+					"timestamp":parent,
+					"parent_id":parent_id
+				},
+
+				"degree":6.2
+			};
+
+			//"$unset":
+			var value2 = {
+				"floor_id":1,
+				"page_id":1
+				"page_index":1,
+				"meta.created_at":1
+			};
+
+			db.pages.update({"meta.created_at":self_date},{"$set":value1});
+			//db.pages.update({"meta.created_at":self_date},{"$unset":value2});
 
 
-});
+		//2.4 if key=="r"  do	 update topic:review
+		} else if (key == "r") {//review
+
+			var value1 = {
+				//field - for topic
+				"review_id":page_id,//暂时还用page_id代替
+				"title":title?title:"",
+				"desc":desc?desc:"",
+				"tags":tags?tags:[],
+				//"content_html":"",
+				"published_at":{"date":self_date,"day":self_time},
+
+				//sort
+				"label":"topic",
+				"key":"r",
+				"sequence":{
+					"num":num?num:0,
+					"date":self_date,
+					"floor_id":floor_id,
+					"page_num":page_index
+				},
+
+				//pair - parent
+				"pair":{//=?question : null
+					"timestamp":pair,
+					"pair_id":pair_id
+				},
+				"parent":{//=subject
+					"timestamp":parent,
+					"parent_id":parent_id
+				},
+
+				"degree":6.2
+			};
+
+			//"$unset":
+			var value2 = {
+				"floor_id":1,
+				"page_id":1
+				"page_index":1,
+				"meta.created_at":1
+			};
+
+			db.pages.update({"meta.created_at":self_date},{"$set":value1});
+			//db.pages.update({"meta.created_at":self_date},{"$unset":value2});
+
+			//update user_info
+			if (email&&uname_in_bbs&&show_mail_time){
+				var user_info = {
+					"uname_in_bbs":uname_in_bbs,
+					"email":email,
+					"email_2":email_2,
+					"qq":qq,
+					"show_mail_time":show_mail_time,
+					"label":user_label,
+					"intro":user_intro
+				};
+				db.pages.update({"meta.created_at":self_date},{"$set":{"user_info":user_info}});
+
+				var user_value = {
+					"uname_in_bbs":uname_in_bbs,
+					"email":email,
+					"email_2":email_2,
+					"qq":qq,
+					"label":user_label,
+					"intro":user_intro
+				};
+
+				db.users.update(
+					{"uname_in_bbs":uname_in_bbs},
+					{
+						"$set":user_value,
+						"$addToSet":{"show_mail_time":show_mail_time}
+					}
+				);
+
+			};
+			//end-if
+		
+
+		//2.5 if key=="c"  do	update 
+		} else if (key=="c"){//c_to_page
+
+			var value1 = {
+				//field - for page_remain
+				"comment_id":page_id,//暂时还用page_id代替
+				"title":title?title:"",
+				"desc":desc?desc:"",
+				"tags":tags?tags:[],
+				//"content_html":"",
+				"published_at":{"date":self_date,"day":self_time},
+
+				//sort
+				"label":"page_remain",
+				"key":"c",
+				"sequence":{
+					"num":num?num:0,
+					"date":self_date,
+					"floor_id":floor_id,
+					"page_num":page_index
+				},
+
+				//pair - parent
+				"pair":{//=?question : null
+					"timestamp":pair,
+					"pair_id":pair_id
+				},
+				"parent":{//=subject
+					"page_num":page_index,
+					"timestamp":parent,
+					"parent_id":parent_id
+				},
+
+				"degree":6.3
+			};
+
+			//"$unset":
+			var value2 = {
+				"floor_id":1,
+				"page_id":1
+				"page_index":1,
+				"meta.created_at":1
+			};
+
+			db.pages.update({"meta.created_at":self_date},{"$set":value1});
+			//db.pages.update({"meta.created_at":self_date},{"$unset":value2});
+
+			
+			//update user_info
+			if (email&&uname_in_bbs&&show_mail_time){
+				var user_info = {
+					"uname_in_bbs":uname_in_bbs,
+					"email":email,
+					"email_2":email_2,
+					"qq":qq,
+					"show_mail_time":show_mail_time,
+					"label":user_label,
+					"intro":user_intro
+				};
+				db.pages.update({"meta.created_at":self_date},{"$set":{"user_info":user_info}});
+
+				var user_value = {
+					"uname_in_bbs":uname_in_bbs,
+					"email":email,
+					"email_2":email_2,
+					"qq":qq,
+					"label":user_label,
+					"intro":user_intro
+				};
+
+				db.users.update(
+					{"uname_in_bbs":uname_in_bbs},
+					{
+						"$set":user_value,
+						"$addToSet":{"show_mail_time":show_mail_time}
+					}
+				);
+
+			};//end-if email
+
+
+		};//end-if key
+		//2.7
+
+
+
+
+	};//end - while has next()
+
+
+});//end - forEach
 
 
 //3.output
 var output_sample = [
 
+//1-段落正文Post
+
+	{
+
+		//field remain as before
+		"user_id":"",
+		"user_name":"",
+		"content":"",
+
+		//field - for post
+		"post_id":page_id,//暂时还用page_id代替
+		"title":title?title:"",
+		"desc":desc?desc:"",
+		"tags":tags?tags:[],
+		//"content_html":"",
+		"published_at":{"date":self_date,"day":self_time},
+
+		//sort
+		"label":"post",
+		"key":"b",
+		"sequence":{
+			"num":num?num:0,
+			"date":self_date,
+			"floor_id":floor_id,
+			"page_num":page_index
+		},
+
+		//pair - parent
+		"pair":{//=previous
+			"timestamp":pair,
+			"pair_id":pair_id
+		},
+		"parent":{//=subject
+			"timestamp":parent,
+			"parent_id":parent_id
+		},
+
+		"degree":6.1//纬度默认
+
+
+	},
 
 //1-土迷提问Question
 	{
-		//remain as before
-		"content":"",
+		//field remain as before
 		"user_id":"",
 		"user_name":"",
-		"page_id":16001,
-		"floor_id":1501,
-		"page_index":16,
-		"meta":{"created_at":"date"},
-		//remove/unset field
-		"degree":6,//纬度属性
-		//set new field
+		"content":"",
+
+		//field - for topic
+		"question_id":page_id,//暂时还用page_id代替
+		"title":title?title:"",
+		"desc":desc?desc:"",
+		"tags":tags?tags:[],
+		//"content_html":"",
+		"published_at":{"date":self_date,"day":self_time},
+
+		//sort
+		"label":"topic",
 		"key":"q",
-		"pair":{"timestamp":"","page_id":16035},
-		"parent":{"timestamp":"","page_id":16030},
-		"tags":["思辨篇","姑苏烟",""],
-		//:暂无subject_id,但日后subject与回应answer采用相同timestamp
-		//"subject_id":"timestamp"
+		"sequence":{
+			"num":num?num:0,
+			"date":self_date,
+			"floor_id":floor_id,
+			"page_num":page_index
+		},
+
+		//pair - parent
+		"pair":{//=?post : null
+			"timestamp":pair,
+			"pair_id":pair_id
+		},
+		"parent":{//=subject
+			"timestamp":parent,
+			"parent_id":parent_id
+		},
+
+		"degree":6.2
+
 	},
 
 //2-润土回复a
@@ -270,22 +660,36 @@ var output_sample = [
 		"content":"",
 		"user_id":"",
 		"user_name":"",
-		"page_id":16001,
-		"floor_id":1501,
-		"page_index":16,
-		"meta":{"created_at":"date"},
 
-		//update field
-		"degree":5,//5五级分类关系,延续category
+		//field - for topic
+		"answer_id":page_id,//暂时还用page_id代替
+		"title":title?title:"",
+		"desc":desc?desc:"",
+		"tags":tags?tags:[],
+		//"content_html":"",
+		"published_at":{"date":self_date,"day":self_time},
 
-		//set new field
+		//sort
+		"label":"topic",
 		"key":"a",
-		"pair":{"timestamp":"","page_id":16022},
-		"parent":{"timestamp":"","page_id":16030},
-		"tags":["思辨篇","",""],
-		"title":"《时机》",
-		//:[optional]subject_id,但日后subject与回应answer采用相同timestamp
-		"subject_id":"timestamp"
+		"sequence":{
+			"num":num?num:0,
+			"date":self_date,
+			"floor_id":floor_id,
+			"page_num":page_index
+		},
+
+		//pair - parent
+		"pair":{//=?question : null
+			"timestamp":pair,
+			"pair_id":pair_id
+		},
+		"parent":{//=subject
+			"timestamp":parent,
+			"parent_id":parent_id
+		},
+
+		"degree":6.2
 	},
 
 
@@ -297,21 +701,37 @@ var output_sample = [
 		"content":"",
 		"user_id":"",
 		"user_name":"",
-		"page_id":16001,
-		"floor_id":1501,
-		"page_index":16,
-		"meta":{"created_at":"date"},
 
-		//remove/unset field
-		"degree":6,//纬度属性,先设置上
+		//field - for topic
+		"review_id":page_id,//暂时还用page_id代替
+		"title":title?title:"",
+		"desc":desc?desc:"",
+		"tags":tags?tags:[],
+		//"content_html":"",
+		"published_at":{"date":self_date,"day":self_time},
 
-		//set new field
+		//sort
+		"label":"topic",
 		"key":"r",
-		"pair":{"timestamp":"","page_id":16022},
-		"parent":{"timestamp":"","page_id":16030},
-		"tags":["思辨篇","奇怪的梦",""],
-		//:暂无subject_id,但日后subject与回应answer采用相同timestamp
-		//"subject_id":"timestamp"
+		"sequence":{
+			"num":num?num:0,
+			"date":self_date,
+			"floor_id":floor_id,
+			"page_num":page_index
+		},
+
+		//pair - parent
+		"pair":{//=?question : null
+			"timestamp":pair,
+			"pair_id":pair_id
+		},
+		"parent":{//=subject
+			"timestamp":parent,
+			"parent_id":parent_id
+		},
+
+		"degree":6.2
+
 	},
 
 //4-无主题指向的一般留言c
@@ -321,18 +741,9 @@ var output_sample = [
 		"content":"",
 		"user_id":"",
 		"user_name":"",
-		"page_id":16001,
-		"floor_id":1501,
-		"page_index":16,
-		"meta":{"created_at":"date"},
-		//remove/unset field
-		"degree":7,//无纬度属性
-		//set new field
-		"key":"cp",//一般留言,page相关即可
-		"parent":{"page_index":16,"page_id":16030},//current page_id
-		"tags":["思辨篇","",""]//提出关键词，热词，便于日后检索
-		//:暂无subject_id,但日后subject与回应answer采用相同timestamp
-		//"subject_id":"timestamp"
+
+
+
 	}
 
 //5-提供email信息(e)
@@ -342,24 +753,51 @@ var output_sample = [
 		"content":"",
 		"user_id":"",
 		"user_name":"",
-		"page_id":16001,
-		"floor_id":1501,
-		"page_index":16,
-		"meta":{"created_at":"date"},
-		//remove/unset field
-		"degree":6,//纬度属性
-		//set new field
-		"key":"e",//email
-		"pair":{"timestamp":"","page_id":16022},
-		"parent":{"timestamp":"","page_id":16030},
-		"info":{
+
+		//field - for page_remain
+		"comment_id":page_id,//暂时还用page_id代替
+		"title":title?title:"",
+		"desc":desc?desc:"",
+		"tags":tags?tags:[],
+		//"content_html":"",
+		"published_at":{"date":self_date,"day":self_time},
+
+		//sort
+		"label":"page_remain",
+		"key":"c",
+		"sequence":{
+			"num":num?num:0,
+			"date":self_date,
+			"floor_id":floor_id,
+			"page_num":page_index
+		},
+
+		//pair - parent
+		"pair":{//=?question : null
+			"timestamp":pair,
+			"pair_id":pair_id
+		},
+		"parent":{//=subject
+			"page_num":page_index,
+			"timestamp":parent,
+			"parent_id":parent_id
+		},
+
+
+		"user_info":{
+			"uname_in_bbs":uname_in_bbs,
 			"email":"",
 			"email_2":"",
 			"qq":"",
 			"born_in_date":{"date":"ISODate","day":"timestamp"},
 			"label":["软件行业","IT创业"],
 			"intro":""
-		}
+		},
+
+
+		"degree":6.3
+
+
 
 	}
 

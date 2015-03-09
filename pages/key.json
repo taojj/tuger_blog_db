@@ -56,7 +56,7 @@ var post = {
 	"sequence":{//排序标记
 		"num":1,
 		"date":"newDate(self_timestamp)",
-		"page_index":12
+		"page_num":12
 	},
 
   //分析1:语义性（设标题，关键词）
@@ -93,7 +93,7 @@ var topic = {
 	"sequence":{//排序标记
 		"num":1,
 		"date":"newDate(self_timestamp)",
-		"page_index":12
+		"page_num":12
 	},
 
   //分析1:语义性（设标题，关键词）
@@ -107,8 +107,8 @@ var topic = {
 
 	//分析2:关联性（找Q/A/R做pair成对，指向subject）
 	//做关联
-	"pair":{"timestamp":"timestamp","page_id":12233},//=answer
-	"parent":{"timestamp":"timestamp","page_id":12203},//=answer
+	"pair":{"timestamp":"timestamp","pair_id":12233},//=answer
+	"parent":{"timestamp":"timestamp","parent_id":12203},//=answer
 
 
 	//[附加addons]对于r部分，加email
@@ -144,7 +144,7 @@ var page_remain = {
 	"sequence":{//排序标记
 		"num":1,
 		"date":"newDate(self_timestamp)",
-		"page_index":12
+		"page_num":12
 	},
 
 	//设纬度6
