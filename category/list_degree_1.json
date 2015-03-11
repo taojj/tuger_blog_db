@@ -1,9 +1,0 @@
-{ "_id" : { "$oid" : "54f5847074616f163c0a0000" }, "name" : "《真爱与梦想》", "alias" : "fengyunzizhuan","desc" : "中国第一本企业家自传", "degree" : 1,  "parent" : "", "category_id" : 1 }
-{ "_id" : { "$oid" : "54f584a474616f163c0b0000" }, "name" : "《润土朋友圈》", "alias" : "gushihui","desc" : "我身边的富豪朋友们", "degree" : 1, "parent" : "", "category_id" : 2 }
-{ "_id" : { "$oid" : "54f584ba74616f163c0c0000" }, "name" : "《风云商学院》", "alias" : "shangxueyuan", "desc" : "中国大陆500个本土商业案例", "degree" : 1, "parent" : "", "category_id" : 3 }
-{ "_id" : { "$oid" : "54f584da74616f163c0d0000" }, "name" : "《天涯论政台》", "alias" : "lunzhengtai", "desc" : "创业家园第一品牌贴", "degree" : 1,  "parent" : "", "category_id" : 4 }
-{ "_id" : { "$oid" : "54f584fa74616f163c0e0000" }, "name" : "《稚一大学堂》", "alias" : "daxuetang", "desc" : "中华文明与文化思想论", "degree" : 1,  "parent" : "", "category_id" : 5 }
-{ "_id" : { "$oid" : "54f5851d74616f163c0f0000" }, "name" : "《风云创业家》", "alias" : "chuangyejia", "desc" : "土迷出风云记", "degree" : 1,  "parent" : "", "category_id" : 6 }
-{ "_id" : { "$oid" : "54f6ce15e2e44a031063422f" }, "name" : "文章", "alias" : "post", "desc":"", "degree" : 1, "parent" : "", "category_id" : 7 }
-{ "_id" : { "$oid" : "54f6cf25e2e44a0310634230" }, "name" : "话题", "alias" : "topic", "desc":"", "degree" : 1, "parent" : "", "category_id" : 8 }
-{ "_id" : { "$oid" : "54f6cf2de2e44a0310634231" }, "name" : "互动", "alias" : "hudong", "desc":"", "degree" : 1, "parent" : "", "category_id" : 9 }

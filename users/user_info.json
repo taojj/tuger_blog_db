@@ -1,0 +1,49 @@
+
+
+/*
+email信息适合随手摘录
+*/
+
+var user = {
+	//normal field
+	"uname_in_bbs":"",//user_name
+	"uid_in_bbs":"",// => space_id 后续进化成个人空间id
+	"isalive":true,
+
+	//field from bbs signup
+	"gender":"男",
+	"star_from_born":"摩羯座",
+	"born_in_date":{"date":"","day":""},
+	"born_in_city":"广西桂平",
+	"head_image_url":"http://tx.tianyaui.com/logo/1715549",
+	"score_in_bbs":2189,
+	"sign_in_count":11,
+	"bbs_year_life":9,
+	"last_sign_in_at":{"$date":ISODate("2008-07-06T15:08:00Z")},
+	"remember_created_at":{"$date":ISODate("2004-08-06T15:16:00Z")},
+
+	//email
+	"email":"",
+	"email_2":"",
+	"email_3":"",
+	"qq":0,
+	"mobile":"",
+	"show_mail_time":["timestamp1","timestamp2"],//"$addToSet"
+	"label":["","",""],//"$addToSet"
+	"intro":"",
+
+	//个人空间
+	"space":{
+		"posts":100,//讨论文章数
+		"topics":22,//参与话题数
+		"questions":22,//问题数
+		"answers":30,//回答数
+		"reviews":55,//评论数
+		"comments":70//readmark
+	},
+
+	//social info社交信息
+	"follow_ten":[],//粉丝信息
+	"fl_total":15,//粉丝数量
+
+}
