@@ -29,7 +29,7 @@ date.toLocaleString( );        //获取日期与时间
 
 function date2day(date){
 	//return ( '0' + ( date.getMonth() + 1 ) ).substr( -2 ) + '/' + ( '0' + date.getDate() ).substr( -2 ) + '/' + date.getFullYear();
-	return (date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate()+'  '+date.getHours()+':'+date.getMinutes()+':'+date.getSeconds())
+	return (date.getFullYear()+'-'+( '0' + ( date.getMonth() + 1 ) ).substr( -2 )+'-'+( '0' + date.getDate() ).substr( -2 )+'  '+('0'+date.getHours()).substr(-2)+':'+('0'+date.getMinutes()).substr(-2)+':'+('0'+date.getSeconds()).substr(-2));
 
 }
 
