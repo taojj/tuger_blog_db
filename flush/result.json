@@ -1,0 +1,308 @@
+MongoDB shell version: 2.6.8
+connecting to: 127.0.0.1/tuger_blog
+tuger_blog
+[object Object]
+categories,pages,pages_copy,subjects,subjects_copy,system.indexes,tags,test0,users,users_copy
+{
+	"_firstBatch" : [
+		{
+			"_id" : "jianrenwuzhe",
+			"count" : 98
+		},
+		{
+			"_id" : "五座",
+			"count" : 99
+		},
+		{
+			"_id" : "pilates11",
+			"count" : 99
+		},
+		{
+			"_id" : "yorker0503",
+			"count" : 101
+		},
+		{
+			"_id" : "远洋量子网络",
+			"count" : 101
+		},
+		{
+			"_id" : "快乐随風",
+			"count" : 104
+		},
+		{
+			"_id" : "北漂望乡",
+			"count" : 111
+		},
+		{
+			"_id" : "lurenjiao",
+			"count" : 111
+		},
+		{
+			"_id" : "静静的张扬",
+			"count" : 111
+		},
+		{
+			"_id" : "small勇",
+			"count" : 114
+		},
+		{
+			"_id" : "踏梦看花",
+			"count" : 116
+		},
+		{
+			"_id" : "翁头白",
+			"count" : 123
+		},
+		{
+			"_id" : "济宁上善若水",
+			"count" : 127
+		},
+		{
+			"_id" : "zhhzhh2046",
+			"count" : 127
+		},
+		{
+			"_id" : "人生选择abc",
+			"count" : 134
+		},
+		{
+			"_id" : "美梦9成真",
+			"count" : 136
+		},
+		{
+			"_id" : "宇文程度",
+			"count" : 137
+		},
+		{
+			"_id" : "东新社",
+			"count" : 145
+		},
+		{
+			"_id" : "莲狗",
+			"count" : 145
+		},
+		{
+			"_id" : "波罗的海7号",
+			"count" : 146
+		},
+		{
+			"_id" : "最爱红旗渠",
+			"count" : 147
+		},
+		{
+			"_id" : "jakefake",
+			"count" : 177
+		},
+		{
+			"_id" : "灵魂舞不动",
+			"count" : 178
+		},
+		{
+			"_id" : "风云布局",
+			"count" : 179
+		},
+		{
+			"_id" : "kunbrother",
+			"count" : 185
+		},
+		{
+			"_id" : "leon_nl",
+			"count" : 194
+		},
+		{
+			"_id" : "huangxi009",
+			"count" : 203
+		},
+		{
+			"_id" : "风云笑看人生",
+			"count" : 211
+		},
+		{
+			"_id" : "冬雷冬雷",
+			"count" : 225
+		},
+		{
+			"_id" : "目光炯炯的小军",
+			"count" : 230
+		},
+		{
+			"_id" : "艾147",
+			"count" : 235
+		},
+		{
+			"_id" : "冰水游侠",
+			"count" : 236
+		},
+		{
+			"_id" : "我是马客",
+			"count" : 245
+		},
+		{
+			"_id" : "woter1",
+			"count" : 249
+		},
+		{
+			"_id" : "欢乐英才",
+			"count" : 257
+		},
+		{
+			"_id" : "yhxe",
+			"count" : 273
+		},
+		{
+			"_id" : "freeds",
+			"count" : 283
+		},
+		{
+			"_id" : "农民公爵",
+			"count" : 289
+		},
+		{
+			"_id" : "chenjunvav",
+			"count" : 312
+		},
+		{
+			"_id" : "high_leon",
+			"count" : 319
+		},
+		{
+			"_id" : "冰雪化骨",
+			"count" : 319
+		},
+		{
+			"_id" : "藕断不了丝也会连",
+			"count" : 351
+		},
+		{
+			"_id" : "zjjxiaoli",
+			"count" : 352
+		},
+		{
+			"_id" : "一天星月",
+			"count" : 371
+		},
+		{
+			"_id" : "我叫风云",
+			"count" : 431
+		},
+		{
+			"_id" : "天使的魔鬼的天使",
+			"count" : 472
+		},
+		{
+			"_id" : "稚一",
+			"count" : 577
+		},
+		{
+			"_id" : "hou1098",
+			"count" : 759
+		},
+		{
+			"_id" : "sinotao1",
+			"count" : 843
+		},
+		{
+			"_id" : "目光呆滞的润土",
+			"count" : 2752
+		}
+	],
+	"_cursor" : {
+		"next" : function next() { [native code] },
+		"hasNext" : function hasNext() { [native code] },
+		"objsLeftInBatch" : function objsLeftInBatch() { [native code] },
+		"readOnly" : function readOnly() { [native code] }
+	},
+	"hasNext" : function () {
+    return this._firstBatch.length || this._cursor.hasNext();
+},
+	"next" : function () {
+    if (this._firstBatch.length) {
+        // $err wouldn't be in _firstBatch since ok was true.
+        return this._firstBatch.pop();
+    }
+    else {
+        var ret = this._cursor.next();
+        if ( ret.$err )
+            throw "error: " + tojson( ret );
+        return ret;
+    }
+},
+	"objsLeftInBatch" : function () {
+    if (this._firstBatch.length) {
+        return this._firstBatch.length;
+    }
+    else {
+        return this._cursor.objsLeftInBatch();
+    }
+},
+	"help" : function () {
+    // This is the same as the "Cursor Methods" section of DBQuery.help().
+    print("\nCursor methods");
+    print("\t.toArray() - iterates through docs and returns an array of the results")
+    print("\t.forEach( func )")
+    print("\t.map( func )")
+    print("\t.hasNext()")
+    print("\t.next()")
+    print("\t.objsLeftInBatch() - returns count of docs left in current batch (when exhausted, a new getMore will be issued)")
+    print("\t.itcount() - iterates through documents and counts them")
+    print("\t.pretty() - pretty print each document, possibly over multiple lines")
+},
+	"toArray" : function (){
+    if ( this._arr )
+        return this._arr;
+
+    var a = [];
+    while ( this.hasNext() )
+        a.push( this.next() );
+    this._arr = a;
+    return a;
+},
+	"forEach" : function ( func ){
+    while ( this.hasNext() )
+        func( this.next() );
+},
+	"map" : function ( func ){
+    var a = [];
+    while ( this.hasNext() )
+        a.push( func( this.next() ) );
+    return a;
+},
+	"itcount" : function (){
+    var num = 0;
+    while ( this.hasNext() ){
+        num++;
+        this.next();
+    }
+    return num;
+},
+	"shellPrint" : function (){
+    try {
+        var start = new Date().getTime();
+        var n = 0;
+        while ( this.hasNext() && n < DBQuery.shellBatchSize ){
+            var s = this._prettyShell ? tojson( this.next() ) : tojson( this.next() , "" , true );
+            print( s );
+            n++;
+        }
+        if (typeof _verboseShell !== 'undefined' && _verboseShell) {
+            var time = new Date().getTime() - start;
+            print("Fetched " + n + " record(s) in " + time + "ms");
+        }
+         if ( this.hasNext() ){
+            print( "Type \"it\" for more" );
+            ___it___  = this;
+        }
+        else {
+            ___it___  = null;
+        }
+   }
+    catch ( e ){
+        print( e );
+    }
+
+},
+	"pretty" : function (){
+    this._prettyShell = true;
+    return this;
+}
+}

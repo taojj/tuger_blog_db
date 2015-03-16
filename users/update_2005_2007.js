@@ -81,7 +81,7 @@ var count = 0;
 users.forEach(function(user){
 
 	//1-load field
-	var uname_in_bbs = user['uname_in_bbs'];
+	var uname_in_bbs = user['user']['name'];
 	var email = user['email'].toLowerCase();
 	var email_2 = user['email_2']? user['email_2'].toLowerCase() : "";
 	var qq = user['qq']? user['qq'] : 0;
@@ -106,7 +106,7 @@ users.forEach(function(user){
 
 	//2-update email
 
-	var u = db.users.find({"uname_in_bbs":uname_in_bbs});
+	var u = db.users.find({"user.name":uname_in_bbs});
 	while (u.hasNext()){
 		var temp = u.next();
 		var email1 = temp['email'];
@@ -145,7 +145,7 @@ users.forEach(function(user){
 		};	
 	
 		//2.1 update fields 
-		db.users.update({"uname_in_bbs":uname_in_bbs},{"$set":value1,"$addToSet":value2});
+		db.users.update({"user.name":uname_in_bbs},{"$set":value1,"$addToSet":value2});
 
 		//2.2 update label
 		if (label!=null && label!=[]){
@@ -153,7 +153,7 @@ users.forEach(function(user){
 				var value_label = {
 					"label":l
 				};
-				db.users.update({"uname_in_bbs":uname_in_bbs},{"$addToSet":value_label});
+				db.users.update({"user.name":uname_in_bbs},{"$addToSet":value_label});
 			});
 		}
 
@@ -164,7 +164,7 @@ users.forEach(function(user){
 		  	"date":date,
 		  	"day":day
 		  };
-		  db.users.update({"uname_in_bbs":uname_in_bbs},{"$addToSet":{"born_in_date2":value3}});
+		  db.users.update({"user.name":uname_in_bbs},{"$addToSet":{"born_in_date2":value3}});
 		}
 
 	};
